@@ -1,6 +1,6 @@
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     if [ -f /etc/redhat-release ]; then
-        yum install zsh git 
+        yum install zsh git -y
     fi
 
     if [ -f /etc/lsb-release ]; then
