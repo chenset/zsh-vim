@@ -8,7 +8,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        brew install zsh git -y
+        brew install zsh git
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
         exit 1
