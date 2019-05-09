@@ -11,14 +11,19 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install zsh git -y
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
+        exit 1
 elif [[ "$OSTYPE" == "msys" ]]; then
         # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        exit 1
 elif [[ "$OSTYPE" == "win32" ]]; then
         # I'm not sure this can happen.
+        exit 1
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
         # ...
+        exit 1
 else
         # Unknown.
+        exit 1
 fi
 
 git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
