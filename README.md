@@ -1,4 +1,4 @@
-#### installation
+#### Installation
 
 ```
 bash <(curl -L -s https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh)
