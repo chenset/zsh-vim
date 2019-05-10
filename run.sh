@@ -1,10 +1,10 @@
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     if [ -f /etc/redhat-release ]; then
-       yum update && yum install zsh git vim -y
+       sudo yum clean all && sudo  yum install zsh git vim -y
     fi
 
     if [ -f /etc/lsb-release ]; then
-        apt update && apt install zsh git vim -y
+       sudo apt update && sudo apt install zsh git vim -y
     fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
