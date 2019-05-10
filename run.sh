@@ -1,14 +1,14 @@
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     if [ -f /etc/redhat-release ]; then
-        yum install zsh git -y
+        yum install zsh git vim -y
     fi
 
     if [ -f /etc/lsb-release ]; then
-        apt install zsh git -y
+        apt install zsh git vim -y
     fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        brew install zsh git
+        brew install zsh git vim
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
         exit 1
