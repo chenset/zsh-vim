@@ -29,11 +29,18 @@ fi
 git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
 #echo 'source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"' > ~/.zshrc
 
-for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
-  ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
-done
+ zsh -c '
+ setopt EXTENDED_GLOB
+ for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
+       ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+ done
+ chsh -s /bin/zsh
+ '
 
 echo 'alias vi=vim' >> ~/.zshrc
-chsh -s /bin/zsh
+
 curl https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim >> ~/.vimrc
 curl https://raw.githubusercontent.com/chenset/vimrc/master/.vimrc >> ~/.vimrc
+
+zsh
+
