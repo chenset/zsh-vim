@@ -38,6 +38,8 @@ git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$H
  '
 
 echo 'alias vi=vim' >> ~/.zshrc
+echo 'export EDITOR=/usr/bin/vim' >> ~/.zshrc
+echo 'export VISUAL=/usr/bin/vim' >> ~/.zshrc
 
 curl https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim >> ~/.vimrc
 curl https://raw.githubusercontent.com/chenset/vimrc/master/.vimrc >> ~/.vimrc
