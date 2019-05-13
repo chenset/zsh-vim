@@ -2,6 +2,6 @@
 
 ```
 curl https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh | bash
-#or
+# or
 bash <(curl -L -s https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh)
 ```
