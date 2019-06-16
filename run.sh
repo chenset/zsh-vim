@@ -37,6 +37,7 @@ git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$H
  chsh -s /bin/zsh
  '
 
+echo 'alias rm="rm -f"' >> ~/.zshrc
 echo 'alias vi=vim' >> ~/.zshrc
 echo 'export EDITOR=/usr/bin/vim' >> ~/.zshrc
 echo 'export VISUAL=/usr/bin/vim' >> ~/.zshrc
