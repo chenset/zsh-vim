@@ -77,6 +77,12 @@ bindkey -s "^[Ol" "+"
 bindkey -s "^[Om" "-"
 bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
+
+# Enable the go modules feature
+export GO111MODULE=on
+# Set the GOPROXY environment variable
+export GOPROXY=https://goproxy.io
+
 ' >> ~/.zshrc
 
 curl https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim >> ~/.vimrc
