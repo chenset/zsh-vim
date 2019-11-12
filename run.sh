@@ -83,6 +83,12 @@ export GO111MODULE=on
 # Set the GOPROXY environment variable
 export GOPROXY=https://goproxy.io
 
+#alias for cnpm
+alias cnpm="npm --registry=https://registry.npm.taobao.org \
+--cache=$HOME/.npm/.cache/cnpm \
+--disturl=https://npm.taobao.org/dist \
+--userconfig=$HOME/.cnpmrc"
+
 ' >> ~/.zshrc
 
 curl https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim >> ~/.vimrc
