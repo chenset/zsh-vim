@@ -78,10 +78,8 @@ bindkey -s "^[Om" "-"
 bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
 
-# Enable the go modules feature
-export GO111MODULE=on
 # Set the GOPROXY environment variable
-export GOPROXY=https://goproxy.io
+export GOPROXY="https://goproxy.io,direct"
 
 #alias for cnpm
 alias cnpm="npm --registry=https://registry.npm.taobao.org \
