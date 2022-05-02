@@ -4,7 +4,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
 
     if [ -f /etc/lsb-release ]; then
-       sudo apt update && sudo apt install zsh git vim lrzsz -y
+       sudo apt update && sudo apt install zsh git vim lrzsz libncursesw5-dev autotools-dev autoconf build-essential -y
     fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
