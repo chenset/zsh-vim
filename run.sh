@@ -2,23 +2,25 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     if [ -f /etc/redhat-release ]; then
        sudo yum clean all && sudo  yum install zsh git vim lrzsz -y
        if [ $? -ne 0 ];then
-        echo 'Install failed!'
-       exit 1;
-    fi
+          echo 'Install failed!'
+          exit 1;
+       fi
     fi
 
     if [ -f /etc/lsb-release ]; then
        sudo apt update && sudo apt install zsh git vim lrzsz libncursesw5-dev autotools-dev autoconf build-essential -y
        if [ $? -ne 0 ];then
          echo 'Install failed!'
-       exit 2;
+         exit 2;
+       fi
     fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew update && brew install zsh git vim
         if [ $? -ne 0 ];then
           echo 'Install failed!'
-        exit 3;
+          exit 3;
+        fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
         exit 1
