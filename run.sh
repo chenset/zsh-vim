@@ -1,3 +1,7 @@
+
+# try ``` awk -F= '/^NAME/{print $2}' /etc/os-release  ```
+# https://askubuntu.com/questions/459402/how-to-know-if-the-running-platform-is-ubuntu-or-centos-with-help-of-a-bash-scri
+
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     if [ -f /etc/redhat-release ]; then
        sudo yum clean all && sudo  yum install zsh git vim lrzsz -y
