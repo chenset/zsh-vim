@@ -8,10 +8,18 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
 
     if [ -f /etc/lsb-release ]; then
-       sudo apt update && sudo apt install zsh git vim lrzsz libncursesw5-dev autotools-dev autoconf build-essential -y
+       apt update && apt install zsh git vim lrzsz libncursesw5-dev autotools-dev autoconf build-essential -y
        if [ $? -ne 0 ];then
          echo 'Install failed!'
          exit 2;
+       fi
+    fi
+    
+    if [ -f /etc/debian_version ]; then
+       apt update && apt install zsh git vim lrzsz libncursesw5-dev autotools-dev autoconf build-essential -y
+       if [ $? -ne 0 ];then
+         echo 'Install failed!'
+         exit 3;
        fi
     fi
     
@@ -19,7 +27,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew update && brew install zsh git vim
         if [ $? -ne 0 ];then
           echo 'Install failed!'
-          exit 3;
+          exit 4;
         fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
