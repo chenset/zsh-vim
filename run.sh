@@ -104,8 +104,7 @@ bindkey -s "^[Oo" "/"
 
 # Set the GOPROXY environment variable
 # export GOPROXY="https://goproxy.io,direct"
-export GOPROXY="https://mirrors.aliyun.com/goproxy/"
-
+export GOPROXY="https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,https://goproxy.io,direct"
 #alias for cnpm
 alias cnpm="npm --registry=https://registry.npm.taobao.org \
 --cache=$HOME/.npm/.cache/cnpm \
