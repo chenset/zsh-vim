@@ -18,6 +18,7 @@ rm -rf ./z*
 
 ```
 # https://github.com/sorin-ionescu/prezto
+
 cd $ZPREZTODIR
 git pull
 git submodule sync --recursive
