@@ -10,7 +10,7 @@ bash <(curl -L -s https://raw.githubusercontent.com/chenset/zsh-vim/master/run.s
 
 ```
 
-rm -rf ./z*
+rm -rf ./.z*
 
 ```
 
