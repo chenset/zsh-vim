@@ -26,6 +26,25 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
          exit 3;
        fi
     fi
+
+    ### fzf 联想
+    if [ ! -d "$HOME/.fzf" ]; then
+       git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    fi
+    ~/.fzf/install --all
+    if [ $? -ne 0 ];then
+       echo 'Install fzf failed!'
+       exit 5;
+    fi
+
+    ### ~/.bashrc 加入:
+    # fzf 基础集成(Ctrl+R 变模糊搜索, Ctrl+T 文件搜索)
+    if ! grep -q 'fzf --bash' ~/.bashrc 2>/dev/null; then
+       echo '' >> ~/.bashrc
+       echo '# fzf 基础集成(Ctrl+R 变模糊搜索,Ctrl+T 文件搜索)' >> ~/.bashrc
+       echo 'eval "$(fzf --bash)" # fzf >= 0.48' >> ~/.bashrc
+       echo 'export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --preview-window down:3:wrap"' >> ~/.bashrc
+    fi
     
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew update && brew install zsh git vim
@@ -65,6 +84,12 @@ echo 'alias rm="rm -f"' >> ~/.zshrc
 echo 'alias vi=vim' >> ~/.zshrc
 echo 'export EDITOR=/usr/bin/vim' >> ~/.zshrc
 echo 'export VISUAL=/usr/bin/vim' >> ~/.zshrc
+
+# fzf 基础集成(Ctrl+R 变模糊搜索,Ctrl+T 文件搜索)
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  echo 'eval "$(fzf --zsh)" # fzf >= 0.48' >> ~/.zshrc
+  echo 'export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --preview-window down:3:wrap"' >> ~/.zshrc
+fi
 
 echo '
 # key bindings
