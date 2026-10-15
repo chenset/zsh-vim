@@ -100,34 +100,47 @@ install_macos_pkgs() {
 
 # ---------- fzf ----------
 install_fzf() {
-  if [ ! -d "$HOME/.fzf/.git" ]; then
+  if [ ! -e "$HOME/.fzf" ]; then
     log "克隆 fzf"
     run git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+  elif [ ! -d "$HOME/.fzf/.git" ]; then
+    warn "$HOME/.fzf 已存在但不是 git 仓库，跳过克隆"
   else
     log "fzf 已存在，跳过克隆"
   fi
-  run "$HOME/.fzf/install" --all
+  [ -x "$HOME/.fzf/install" ] && run "$HOME/.fzf/install" --all || warn "未找到 $HOME/.fzf/install，跳过 fzf 安装"
 }
 
 # ---------- prezto ----------
 install_prezto() {
   local zdotdir="${ZDOTDIR:-$HOME}"
-  if [ ! -d "$zdotdir/.zprezto/.git" ]; then
+  if [ ! -e "$zdotdir/.zprezto" ]; then
     log "克隆 prezto"
     run git clone --depth 1 --recursive \
       https://github.com/sorin-ionescu/prezto.git "$zdotdir/.zprezto"
+  elif [ ! -d "$zdotdir/.zprezto/.git" ]; then
+    warn "$zdotdir/.zprezto 已存在但不是 git 仓库，跳过克隆"
   else
     log "prezto 已存在，跳过克隆"
   fi
 
-  # 建立 runcom 符号链接（ln -sf 保证幂等）
-  run zsh -c '
-    setopt EXTENDED_GLOB
-    zdotdir="${ZDOTDIR:-$HOME}"
-    for rcfile in "$zdotdir"/.zprezto/runcoms/^README.md(.N); do
-      ln -sf "$rcfile" "$zdotdir/.${rcfile:t}"
-    done
-  '
+  # 建立 runcom 符号链接；已存在的真实文件不覆盖，避免丢失用户原有配置
+  if [ "$DRY_RUN" = 1 ]; then
+    printf '\033[1;36m[dry-run] 为 prezto runcoms 建立/刷新符号链接(不覆盖真实文件)\033[0m\n'
+  else
+    zsh -c '
+      setopt EXTENDED_GLOB
+      zdotdir="${ZDOTDIR:-$HOME}"
+      for rcfile in "$zdotdir"/.zprezto/runcoms/^README.md(.N); do
+        dest="$zdotdir/.${rcfile:t}"
+        if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+          print -u2 "[!] 跳过已存在的真实文件: $dest"
+          continue
+        fi
+        ln -sf "$rcfile" "$dest"
+      done
+    '
+  fi
 
   # 切换默认 shell，失败不要中断整个脚本
   local zsh_path
@@ -146,7 +159,8 @@ export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --previ
 }
 
 setup_zshrc() {
-  append_block "$HOME/.zshrc" '# [dotfiles] aliases' \
+  # marker 选用旧版内容里也存在的字符串，保证旧机器重复执行不重复追加
+  append_block "$HOME/.zshrc" 'alias rm="rm -f"' \
 'alias rm="rm -f"
 alias vi=vim
 export EDITOR=/usr/bin/vim
@@ -158,7 +172,7 @@ export VISUAL=/usr/bin/vim'
 export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --preview-window down:3:wrap"'
   fi
 
-  append_block "$HOME/.zshrc" '# [dotfiles] key bindings' \
+  append_block "$HOME/.zshrc" 'bindkey "\e[1~" beginning-of-line' \
 '# key bindings
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[4~" end-of-line
@@ -206,7 +220,8 @@ alias cnpm="npm --registry=https://registry.npm.taobao.org \
 
 setup_vimrc() {
   # 用显式 marker 去重，避免重复执行时内容翻倍
-  if grep -qF '# [dotfiles] vimrc' "$HOME/.vimrc" 2>/dev/null; then
+  # 同时识别旧版(无 marker)已下载的内容，避免重复追加
+  if grep -qF -e '# [dotfiles] vimrc' -e '@amix3k' "$HOME/.vimrc" 2>/dev/null; then
     return 0
   fi
   if [ "$DRY_RUN" = 1 ]; then
