@@ -6,6 +6,14 @@ curl -fsSL https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh | bas
 bash <(curl -fsSL https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh)
 ```
 
+预览改动（dry-run，不修改系统）：
+
+```
+curl -fsSL https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh | bash -s -- --dry-run
+# or
+bash <(curl -fsSL https://raw.githubusercontent.com/chenset/zsh-vim/master/run.sh) --dry-run
+```
+
 脚本特性：幂等（可重复执行）、失败即停、支持 Linux（RHEL/CentOS、Debian/Ubuntu）与 macOS。
 
 #### 选项
