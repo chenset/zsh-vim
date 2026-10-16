@@ -75,6 +75,23 @@ append_block() {
   fi
 }
 
+# 幂等前置：仅当文件内不存在 marker 时，将 content 插入到文件开头
+prepend_block() {
+  local file="$1" marker="$2" content="$3"
+  if [ "$DRY_RUN" = 1 ]; then
+    printf '\033[1;36m[dry-run] 前置到 %s (若缺少 marker: %s)\033[0m\n' "$file" "$marker"
+    return 0
+  fi
+  touch "$file"
+  if ! grep -qF "$marker" "$file" 2>/dev/null; then
+    local tmp
+    tmp="$(mktemp "${file}.XXXXXX")"
+    { printf '%s\n\n' "$content"; cat "$file"; } > "$tmp"
+    cat "$tmp" > "$file"
+    rm -f "$tmp"
+  fi
+}
+
 # ---------- 系统包 ----------
 install_linux_pkgs() {
   if [ -f /etc/redhat-release ]; then
@@ -203,6 +220,13 @@ export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --previ
 }
 
 setup_zshrc() {
+  # 防御：确保 Prezto 初始化块存在（真实文件场景下 runcom 链接会被跳过）
+  prepend_block "$HOME/.zshrc" 'Source Prezto' \
+'# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi'
+
   # marker 选用旧版内容里也存在的字符串，保证旧机器重复执行不重复追加
   append_block "$HOME/.zshrc" 'alias rm="rm -f"' \
 'alias rm="rm -f"
