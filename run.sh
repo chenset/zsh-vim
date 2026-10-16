@@ -150,12 +150,56 @@ install_prezto() {
   fi
 }
 
+# ---------- 时区 ----------
+setup_timezone() {
+  local zone="/usr/share/zoneinfo/Asia/Shanghai"
+  local dest="/etc/localtime"
+
+  # 防御：目标时区文件必须存在
+  if [ ! -e "$zone" ]; then
+    warn "时区文件不存在: $zone，跳过时区设置"
+    return 0
+  fi
+
+  # 防御：已经是正确的符号链接则无需改动
+  if [ -L "$dest" ] && [ "$(readlink "$dest" 2>/dev/null)" = "$zone" ]; then
+    log "时区已正确设置: $dest -> $zone"
+    return 0
+  fi
+
+  if [ "$DRY_RUN" = 1 ]; then
+    printf '\033[1;36m[dry-run] 设置时区: %s -> %s\033[0m\n' "$dest" "$zone"
+    return 0
+  fi
+
+  # 防御：真实文件先备份，避免直接 unlink 丢数据
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    local backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
+    warn "$dest 是真实文件，先备份到 $backup"
+    run $SUDO cp -a "$dest" "$backup"
+  fi
+
+  # 移除旧的链接/文件后重建，保证幂等
+  if [ -e "$dest" ] || [ -L "$dest" ]; then
+    run $SUDO unlink "$dest"
+  fi
+  run $SUDO ln -s "$zone" "$dest"
+}
+
 # ---------- rc 文件 ----------
 setup_bashrc() {
   append_block "$HOME/.bashrc" 'fzf --bash' \
 '# fzf 基础集成(Ctrl+R 变模糊搜索,Ctrl+T 文件搜索)
 eval "$(fzf --bash)" # fzf >= 0.48
 export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --preview-window down:3:wrap"'
+
+  # 防御：仅当系统存在该 locale 时才导出，避免无效设置
+  if locale -a 2>/dev/null | grep -iE '^en_DK\.utf-?8$' >/dev/null; then
+    append_block "$HOME/.bashrc" 'export LC_TIME=en_DK.UTF-8' \
+      'export LC_TIME=en_DK.UTF-8'
+  else
+    warn "系统未安装 en_DK.UTF-8 locale，跳过 LC_TIME 设置"
+  fi
 }
 
 setup_zshrc() {
@@ -170,6 +214,14 @@ export VISUAL=/usr/bin/vim'
     append_block "$HOME/.zshrc" 'fzf --zsh' \
 'eval "$(fzf --zsh)" # fzf >= 0.48
 export FZF_CTRL_R_OPTS="--height 50% --reverse --preview '\''echo {}'\'' --preview-window down:3:wrap"'
+
+    # 防御：仅当系统存在该 locale 时才导出，避免无效设置
+    if locale -a 2>/dev/null | grep -iE '^en_DK\.utf-?8$' >/dev/null; then
+      append_block "$HOME/.zshrc" 'export LC_TIME=en_DK.UTF-8' \
+        'export LC_TIME=en_DK.UTF-8'
+    else
+      warn "系统未安装 en_DK.UTF-8 locale，跳过 LC_TIME 设置"
+    fi
   fi
 
   append_block "$HOME/.zshrc" 'bindkey "\e[1~" beginning-of-line' \
@@ -221,7 +273,7 @@ alias cnpm="npm --registry=https://registry.npm.taobao.org \
 setup_vimrc() {
   # 用显式 marker 去重，避免重复执行时内容翻倍
   # 同时识别旧版(无 marker)已下载的内容，避免重复追加
-  if grep -qF -e '# [dotfiles] vimrc' -e '@amix3k' "$HOME/.vimrc" 2>/dev/null; then
+  if grep -qF -e '" [dotfiles] vimrc' -e '@amix3k' "$HOME/.vimrc" 2>/dev/null; then
     return 0
   fi
   if [ "$DRY_RUN" = 1 ]; then
@@ -229,7 +281,7 @@ setup_vimrc() {
     return 0
   fi
   touch "$HOME/.vimrc"
-  printf '\n# [dotfiles] vimrc\n' >> "$HOME/.vimrc"
+  printf '\n" [dotfiles] vimrc\n' >> "$HOME/.vimrc"
   curl -fsSL --retry 3 https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim \
     >> "$HOME/.vimrc" || warn "下载 amix/vimrc 失败"
   curl -fsSL --retry 3 https://raw.githubusercontent.com/chenset/vimrc/master/.vimrc \
@@ -244,6 +296,7 @@ main() {
     linux-gnu)
       install_linux_pkgs
       install_fzf
+      setup_timezone
       setup_bashrc
       ;;
     darwin*)
